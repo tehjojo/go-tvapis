@@ -18,11 +18,11 @@ type Episode struct {
 }
 
 // GetEpisodes finds all episodes for the given show
-func (c *Client) GetEpisodes(s *Show) (episodes []Episode) {
+func (c *Client) GetEpisodes(s *Show) (episodes []Episode, err error) {
 	path := "/shows/" + strconv.FormatInt(int64(s.Id), 10) + "/episodes"
 
 	if err := c.get(path, &episodes); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return episodes

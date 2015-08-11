@@ -1,9 +1,9 @@
 package tvmaze
 
 import (
-	"log"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 // Show wraps a TV Maze show object
@@ -23,33 +23,60 @@ type Show struct {
 	Remotes map[string]int `json:"externals"`
 }
 
+// GetTitle return the show title
+func (s *Show) GetTitle() string {
+	return s.Name
+}
+
+// GetDescription returns a summary of the show
+func (s *Show) GetDescription() string {
+	return s.Summary
+}
+
+// GetNetwork returns the network that currently broadcasts the show
+func (s *Show) GetNetwork() string {
+	return s.Network.Name
+}
+
+// GetFirstAired return the time the first episode was aired
+func (s *Show) GetFirstAired() time.Time {
+	return s.Premiered
+}
+
 // GetTVRageID returns the show's ID on tvrage.com
 func (s *Show) GetTVRageID() int {
 	return s.Remotes["tvrage"]
 }
 
-// LookupShow tries to find a match for the show name and return a Show object if successful
-func (c *Client) LookupShow(name string) (s *Show) {
-	path := "/singlesearch/shows?q=" + url.QueryEscape(name)
+// FindShow finds all matches for a given search string
+func (c *Client) FindShow(name string) (s []*Show, err error) {
+	path := "/search/shows?q=" + url.QueryEscape(name)
 
 	if err := c.get(path, &s); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return s
 }
 
-// GetShow retrieves a show by id
-func (c *Client) GetShow(id int, withEpisodes bool) (s *Show) {
-	path := "/shows/" + strconv.FormatInt(int64(id), 10)
-
-	if withEpisodes {
-		path += "?embed=episodes"
-	}
+// FindShow finds all matches for a given search string
+func (c *Client) GetShow(name string) (s []*Show, err error) {
+	path := "/singlesearch/shows?q=" + url.QueryEscape(name)
 
 	if err := c.get(path, &s); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return s
+}
+
+// RefreshShow refreshes a show from the server
+func (c *Client) RefreshShow(show *Show) (err error) {
+	path := "/shows/" + strconv.FormatInt(int64(show.Id), 10)
+
+	if err := c.get(path, &show); err != nil {
+		return err
+	}
+
+	return nil
 }
