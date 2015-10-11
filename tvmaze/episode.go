@@ -17,10 +17,10 @@ type Episode struct {
 }
 
 // GetEpisodes finds all episodes for the given show
-func (c *Client) GetEpisodes(s *Show) (episodes []Episode, err error) {
-	path := fmt.Sprintf("/shows/%d/episodes", s.ID)
+func (c Client) GetEpisodes(s Show) (episodes []Episode, err error) {
+	url := baseURLWithPath(fmt.Sprintf("shows/%d/episodes", s.ID))
 
-	if err := c.get(path, &episodes); err != nil {
+	if err := c.get(url, &episodes); err != nil {
 		return nil, err
 	}
 

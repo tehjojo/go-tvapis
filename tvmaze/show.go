@@ -2,9 +2,16 @@ package tvmaze
 
 import (
 	"fmt"
-	"net/url"
 	"time"
+
+	"github.com/simplereach/timeutils"
 )
+
+// ShowResponse wraps a TV Maze search response
+type ShowResponse struct {
+	Score float64
+	Show  Show
+}
 
 // Show wraps a TV Maze show object
 type Show struct {
@@ -14,7 +21,7 @@ type Show struct {
 	Genres    []string
 	Status    string
 	Runtime   int
-	Premiered date
+	Premiered timeutils.Time
 	Summary   string
 	Network   network
 	Embeds    struct {
@@ -24,33 +31,33 @@ type Show struct {
 }
 
 // GetTitle return the show title
-func (s *Show) GetTitle() string {
+func (s Show) GetTitle() string {
 	return s.Name
 }
 
 // GetDescription returns a summary of the show
-func (s *Show) GetDescription() string {
+func (s Show) GetDescription() string {
 	return s.Summary
 }
 
 // GetNetwork returns the network that currently broadcasts the show
-func (s *Show) GetNetwork() string {
+func (s Show) GetNetwork() string {
 	return s.Network.Name
 }
 
 // GetFirstAired return the time the first episode was aired
-func (s *Show) GetFirstAired() time.Time {
+func (s Show) GetFirstAired() time.Time {
 	return s.Premiered.Time
 }
 
 // GetTVRageID returns the show's ID on tvrage.com
-func (s *Show) GetTVRageID() int {
+func (s Show) GetTVRageID() int {
 	return s.Remotes["tvrage"]
 }
 
-// FindShow finds all matches for a given search string
-func (c *Client) FindShow(name string) (s []*Show, err error) {
-	path := fmt.Sprintf("/search/shows?q=%s", url.QueryEscape(name))
+// FindShows finds all matches for a given search string
+func (c Client) FindShows(name string) (s []ShowResponse, err error) {
+	path := baseURLWithPathQuery("search/shows", "q", name)
 
 	if err := c.get(path, &s); err != nil {
 		return nil, err
@@ -60,21 +67,22 @@ func (c *Client) FindShow(name string) (s []*Show, err error) {
 }
 
 // GetShow finds all matches for a given search string
-func (c *Client) GetShow(name string) (s []*Show, err error) {
-	path := fmt.Sprintf("/singlesearch/shows?q=%s", url.QueryEscape(name))
+func (c Client) GetShow(name string) (*Show, error) {
+	path := baseURLWithPathQuery("singlesearch/shows", "q", name)
 
-	if err := c.get(path, &s); err != nil {
+	show := &Show{}
+	if err := c.get(path, show); err != nil {
 		return nil, err
 	}
 
-	return s, nil
+	return show, nil
 }
 
 // RefreshShow refreshes a show from the server
-func (c *Client) RefreshShow(show *Show) (err error) {
-	path := fmt.Sprintf("/shows/%d", show.ID)
+func (c Client) RefreshShow(show *Show) (err error) {
+	url := baseURLWithPath(fmt.Sprintf("shows/%d", show.ID))
 
-	if err := c.get(path, &show); err != nil {
+	if err := c.get(url, &show); err != nil {
 		return err
 	}
 
