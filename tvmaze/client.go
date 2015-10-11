@@ -2,7 +2,6 @@ package tvmaze
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -25,23 +24,13 @@ func NewClient() *Client {
 }
 
 func (c *Client) get(path string, ret interface{}) (err error) {
-	var r *http.Response
-	var URL string
-	var b []byte
-
-	URL = c.baseURL + path
-	r, err = http.Get(URL)
+	r, err := http.Get(c.baseURL + path)
 	if err != nil {
 		return err
 	}
 
 	defer r.Body.Close()
-	b, err = ioutil.ReadAll(r.Body)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(b, &ret)
+	return json.NewDecoder(r.Body).Decode(&ret)
 }
 
 type date struct {
