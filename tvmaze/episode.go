@@ -1,14 +1,13 @@
 package tvmaze
 
 import (
-	"log"
-	"strconv"
+	"fmt"
 	"time"
 )
 
 // Episode wraps a TV Maze episode resource
 type Episode struct {
-	Id      int
+	ID      int
 	Name    string
 	Season  int
 	Number  int
@@ -19,11 +18,11 @@ type Episode struct {
 
 // GetEpisodes finds all episodes for the given show
 func (c *Client) GetEpisodes(s *Show) (episodes []Episode, err error) {
-	path := "/shows/" + strconv.FormatInt(int64(s.Id), 10) + "/episodes"
+	path := fmt.Sprintf("/shows/%d/episodes", s.ID)
 
 	if err := c.get(path, &episodes); err != nil {
 		return nil, err
 	}
 
-	return episodes
+	return episodes, nil
 }

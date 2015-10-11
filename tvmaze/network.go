@@ -1,7 +1,7 @@
 package tvmaze
 
 type network struct {
-	Id      int
+	ID      int
 	Name    string
 	Country country
 }

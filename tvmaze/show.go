@@ -1,14 +1,14 @@
 package tvmaze
 
 import (
+	"fmt"
 	"net/url"
-	"strconv"
 	"time"
 )
 
 // Show wraps a TV Maze show object
 type Show struct {
-	Id        int
+	ID        int
 	Name      string
 	Type      string
 	Genres    []string
@@ -40,7 +40,7 @@ func (s *Show) GetNetwork() string {
 
 // GetFirstAired return the time the first episode was aired
 func (s *Show) GetFirstAired() time.Time {
-	return s.Premiered
+	return s.Premiered.Time
 }
 
 // GetTVRageID returns the show's ID on tvrage.com
@@ -50,29 +50,29 @@ func (s *Show) GetTVRageID() int {
 
 // FindShow finds all matches for a given search string
 func (c *Client) FindShow(name string) (s []*Show, err error) {
-	path := "/search/shows?q=" + url.QueryEscape(name)
+	path := fmt.Sprintf("/search/shows?q=%s", url.QueryEscape(name))
 
 	if err := c.get(path, &s); err != nil {
 		return nil, err
 	}
 
-	return s
+	return s, nil
 }
 
-// FindShow finds all matches for a given search string
+// GetShow finds all matches for a given search string
 func (c *Client) GetShow(name string) (s []*Show, err error) {
-	path := "/singlesearch/shows?q=" + url.QueryEscape(name)
+	path := fmt.Sprintf("/singlesearch/shows?q=%s", url.QueryEscape(name))
 
 	if err := c.get(path, &s); err != nil {
 		return nil, err
 	}
 
-	return s
+	return s, nil
 }
 
 // RefreshShow refreshes a show from the server
 func (c *Client) RefreshShow(show *Show) (err error) {
-	path := "/shows/" + strconv.FormatInt(int64(show.Id), 10)
+	path := fmt.Sprintf("/shows/%d", show.ID)
 
 	if err := c.get(path, &show); err != nil {
 		return err
