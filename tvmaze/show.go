@@ -55,6 +55,11 @@ func (s Show) GetTVRageID() int {
 	return s.Remotes["tvrage"]
 }
 
+// GetTVDBID returns the show's ID on thetvdb.com
+func (s Show) GetTVDBID() int {
+	return s.Remotes["thetvdb"]
+}
+
 // FindShows finds all matches for a given search string
 func (c Client) FindShows(name string) (s []ShowResponse, err error) {
 	path := baseURLWithPathQuery("search/shows", "q", name)
