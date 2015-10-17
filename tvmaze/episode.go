@@ -11,7 +11,7 @@ type Episode struct {
 	Name    string
 	Season  int
 	Number  int
-	AirDate time.Time `json:"airstamp"`
+	AirDate *time.Time `json:"airstamp"`
 	Runtime int
 	Summary string
 }
