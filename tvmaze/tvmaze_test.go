@@ -22,6 +22,15 @@ func TestTVMaze(t *testing.T) {
 			So(results[0].Show.GetDescription(), ShouldNotResemble, "")
 		})
 
+		Convey("I can get a show by its tvmaze id", func() {
+			result, err := c.GetShowWithID("315") // Archer
+			So(err, ShouldBeNil)
+			So(result, ShouldNotBeNil)
+			//fmt.Println(JSONString(result))
+			So(result.GetTitle(), ShouldNotResemble, "")
+			So(result.GetDescription(), ShouldNotResemble, "")
+		})
+
 		Convey("I can get a show by its tvrage id", func() {
 			result, err := c.GetShowWithTVRageID("23354") // Archer
 			So(err, ShouldBeNil)

@@ -83,6 +83,18 @@ func (c Client) GetShow(name string) (*Show, error) {
 	return show, nil
 }
 
+// GetShowWithID finds a show by its TVMaze ID
+func (c Client) GetShowWithID(tvMazeID string) (*Show, error) {
+	url := baseURLWithPath(fmt.Sprintf("shows/%s", tvMazeID))
+
+	show := &Show{}
+	if err := c.get(url, show); err != nil {
+		return nil, err
+	}
+
+	return show, nil
+}
+
 // GetShowWithTVRageID finds a show by its TVRage ID
 func (c Client) GetShowWithTVRageID(tvRageID string) (*Show, error) {
 	url := baseURLWithPathQuery("lookup/shows", "tvrage", tvRageID)
