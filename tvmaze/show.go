@@ -62,9 +62,9 @@ func (s Show) GetTVDBID() int {
 
 // FindShows finds all matches for a given search string
 func (c Client) FindShows(name string) (s []ShowResponse, err error) {
-	path := baseURLWithPathQuery("search/shows", "q", name)
+	url := baseURLWithPathQuery("search/shows", "q", name)
 
-	if err := c.get(path, &s); err != nil {
+	if err := c.get(url, &s); err != nil {
 		return nil, err
 	}
 
@@ -73,10 +73,34 @@ func (c Client) FindShows(name string) (s []ShowResponse, err error) {
 
 // GetShow finds all matches for a given search string
 func (c Client) GetShow(name string) (*Show, error) {
-	path := baseURLWithPathQuery("singlesearch/shows", "q", name)
+	url := baseURLWithPathQuery("singlesearch/shows", "q", name)
 
 	show := &Show{}
-	if err := c.get(path, show); err != nil {
+	if err := c.get(url, show); err != nil {
+		return nil, err
+	}
+
+	return show, nil
+}
+
+// GetShowWithTVRageID finds a show by its TVRage ID
+func (c Client) GetShowWithTVRageID(tvRageID string) (*Show, error) {
+	url := baseURLWithPathQuery("lookup/shows", "tvrage", tvRageID)
+
+	show := &Show{}
+	if err := c.get(url, show); err != nil {
+		return nil, err
+	}
+
+	return show, nil
+}
+
+// GetShowWithTVDBID finds a show by its TVDB ID
+func (c Client) GetShowWithTVDBID(TVDBID string) (*Show, error) {
+	url := baseURLWithPathQuery("lookup/shows", "thetvdb", TVDBID)
+
+	show := &Show{}
+	if err := c.get(url, show); err != nil {
 		return nil, err
 	}
 

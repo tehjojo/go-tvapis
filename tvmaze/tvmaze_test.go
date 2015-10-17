@@ -2,7 +2,6 @@ package tvmaze
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	log "github.com/Sirupsen/logrus"
@@ -21,6 +20,15 @@ func TestTVMaze(t *testing.T) {
 			//fmt.Println(JSONString(results))
 			So(results[0].Show.GetTitle(), ShouldNotResemble, "")
 			So(results[0].Show.GetDescription(), ShouldNotResemble, "")
+		})
+
+		Convey("I can get a show by its tvrage id", func() {
+			result, err := c.GetShowWithTVRageID("23354") // Archer
+			So(err, ShouldBeNil)
+			So(result, ShouldNotBeNil)
+			//fmt.Println(JSONString(result))
+			So(result.GetTitle(), ShouldNotResemble, "")
+			So(result.GetDescription(), ShouldNotResemble, "")
 		})
 
 		Convey("I can get a show", func() {
@@ -52,7 +60,16 @@ func TestTVMaze(t *testing.T) {
 			show := Show{ID: 75} // Mindy Project
 			episode, err := c.GetNextEpisode(show)
 			So(err, ShouldBeNil)
-			fmt.Println(JSONString(episode))
+			So(episode, ShouldNotBeNil)
+			//fmt.Println(JSONString(episode))
+		})
+
+		Convey("null times are parsed correctly", func() {
+			show := Show{ID: 180} // Firefly
+			episodes, err := c.GetEpisodes(show)
+			So(err, ShouldBeNil)
+			//fmt.Println(JSONString(episodes))
+			So(len(episodes), ShouldBeGreaterThan, 0)
 		})
 	})
 }
