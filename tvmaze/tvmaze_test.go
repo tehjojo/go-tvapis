@@ -31,6 +31,14 @@ func TestTVMaze(t *testing.T) {
 			So(result.GetDescription(), ShouldNotResemble, "")
 		})
 
+		Convey("I can get a specific episode of a show", func() {
+			result, err := c.GetEpisode(Show{ID: 315}, 4, 5)
+			So(err, ShouldBeNil)
+			So(result, ShouldNotBeNil)
+			So(result.Name, ShouldNotResemble, "")
+			So(result.Summary, ShouldNotResemble, "")
+		})
+
 		Convey("I can get a show by its tvrage id", func() {
 			result, err := c.GetShowWithTVRageID("23354") // Archer
 			So(err, ShouldBeNil)

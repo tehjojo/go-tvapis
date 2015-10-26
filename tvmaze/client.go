@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -45,5 +46,16 @@ func baseURLWithPathQuery(path, key, val string) url.URL {
 	ret := baseURL
 	ret.Path = path
 	ret.RawQuery = fmt.Sprintf("%s=%s", key, url.QueryEscape(val))
+	return ret
+}
+
+func baseURLWithPathQueries(path string, vals map[string]string) url.URL {
+	ret := baseURL
+	ret.Path = path
+	var queryStrings []string
+	for key, val := range vals {
+		queryStrings = append(queryStrings, fmt.Sprintf("%s=%s", key, url.QueryEscape(val)))
+	}
+	ret.RawQuery = strings.Join(queryStrings, "&")
 	return ret
 }

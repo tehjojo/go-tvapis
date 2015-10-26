@@ -2,6 +2,7 @@ package tvmaze
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -40,6 +41,20 @@ func (c Client) GetNextEpisode(s Show) (*Episode, error) {
 		return nil, nil
 	}
 	return &embed.Embedded.NextEpisode, nil
+}
+
+// GetEpisode returns a specific episode for a show
+func (c Client) GetEpisode(s Show, season int, episode int) (*Episode, error) {
+	url := baseURLWithPathQueries(fmt.Sprintf("shows/%d/episodebynumber", s.ID), map[string]string{
+		"season": strconv.Itoa(season),
+		"number": strconv.Itoa(episode),
+	})
+
+	var epOut Episode
+	if err := c.get(url, &epOut); err != nil {
+		return nil, err
+	}
+	return &epOut, nil
 }
 
 type embeddedNextEpisode struct {
