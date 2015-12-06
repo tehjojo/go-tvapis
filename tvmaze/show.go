@@ -1,10 +1,10 @@
 package tvmaze
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"time"
-
-	"github.com/simplereach/timeutils"
 )
 
 // ShowResponse wraps a TV Maze search response
@@ -21,7 +21,7 @@ type Show struct {
 	Genres    []string
 	Status    string
 	Runtime   int
-	Premiered timeutils.Time
+	Premiered Date
 	Summary   string
 	Network   network
 	Embeds    struct {
@@ -47,7 +47,10 @@ func (s Show) GetNetwork() string {
 
 // GetFirstAired return the time the first episode was aired
 func (s Show) GetFirstAired() time.Time {
-	return s.Premiered.Time
+	if s.Premiered.Valid {
+		return s.Premiered.Time
+	}
+	return time.Time{}
 }
 
 // GetTVRageID returns the show's ID on tvrage.com
@@ -128,4 +131,42 @@ func (c Client) RefreshShow(show *Show) (err error) {
 	}
 
 	return nil
+}
+
+// Date represents a date from tvmaze, supporting nullability
+type Date struct {
+	time.Time
+	Valid bool
+}
+
+// MarshalJSON implements json.Marshaler.
+// It will encode null if this Date is null.
+func (d *Date) MarshalJSON() ([]byte, error) {
+	if !d.Valid {
+		return []byte("null"), nil
+	}
+	return d.Time.MarshalJSON()
+}
+
+// UnmarshalJSON implements json.Unmarshaler.
+// It supports string and null input.
+func (d *Date) UnmarshalJSON(data []byte) error {
+	var err error
+	var v interface{}
+	if err = json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	switch x := v.(type) {
+	case string:
+		var parsedTime time.Time
+		parsedTime, err = time.Parse(time.RFC3339[:10], x)
+		*d = Date{parsedTime, true}
+	case nil:
+		d.Valid = false
+		return nil
+	default:
+		err = fmt.Errorf("json: cannot unmarshal %v into Go value of type tvmaze.Date", reflect.TypeOf(v).Name())
+	}
+	d.Valid = err == nil
+	return err
 }
