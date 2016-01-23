@@ -1,5 +1,5 @@
 # go-tvmaze
-
+[![Build Status](https://travis-ci.org/tehjojo/go-tvmaze.svg?branch=master)](https://travis-ci.org/tehjojo/go-tvmaze)
 > TVMaze API bindings for Go (golang)
 
 ## Documentation
