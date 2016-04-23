@@ -27,8 +27,11 @@ func TestTVMaze(t *testing.T) {
 			So(err, ShouldBeNil)
 			So(result, ShouldNotBeNil)
 			//fmt.Println(JSONString(result))
-			So(result.GetTitle(), ShouldNotResemble, "")
+			So(result.GetTitle(), ShouldEqual, "Archer")
 			So(result.GetDescription(), ShouldNotResemble, "")
+			So(result.GetTVDBID(), ShouldEqual, 110381)
+			So(result.GetTVRageID(), ShouldEqual, 23354)
+			So(result.GetIMDBID(), ShouldEqual, "tt1486217")
 		})
 
 		Convey("I can get a specific episode of a show", func() {

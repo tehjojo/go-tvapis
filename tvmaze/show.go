@@ -27,7 +27,7 @@ type Show struct {
 	Embeds    struct {
 		Episodes []Episode
 	} `json:"_embedded"`
-	Remotes map[string]int `json:"externals"`
+	Remotes map[string]interface{} `json:"externals"`
 }
 
 // GetTitle return the show title
@@ -55,12 +55,17 @@ func (s Show) GetFirstAired() time.Time {
 
 // GetTVRageID returns the show's ID on tvrage.com
 func (s Show) GetTVRageID() int {
-	return s.Remotes["tvrage"]
+	return int(s.Remotes["tvrage"].(float64))
 }
 
 // GetTVDBID returns the show's ID on thetvdb.com
 func (s Show) GetTVDBID() int {
-	return s.Remotes["thetvdb"]
+	return int(s.Remotes["thetvdb"].(float64))
+}
+
+// GetIMDBID returns the show's ID on imdb.com
+func (s Show) GetIMDBID() string {
+	return s.Remotes["imdb"].(string)
 }
 
 // FindShows finds all matches for a given search string
@@ -125,12 +130,7 @@ func (c Client) GetShowWithTVDBID(TVDBID string) (*Show, error) {
 // RefreshShow refreshes a show from the server
 func (c Client) RefreshShow(show *Show) (err error) {
 	url := baseURLWithPath(fmt.Sprintf("shows/%d", show.ID))
-
-	if err := c.get(url, &show); err != nil {
-		return err
-	}
-
-	return nil
+	return c.get(url, &show)
 }
 
 // Date represents a date from tvmaze, supporting nullability
