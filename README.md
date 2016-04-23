@@ -1,17 +1,25 @@
-# TV APIs for Go
+# go-tvmaze
+[![Build Status](https://travis-ci.org/tehjojo/go-tvmaze.svg?branch=master)](https://travis-ci.org/tehjojo/go-tvmaze)
+> TVMaze API bindings for Go (golang)
 
-> Provides interfaces to different TV show information providers
+## Documentation
+https://godoc.org/github.com/tehjojo/go-tvmaze/tvmaze
+
+## Features
+- Search shows by name, TVMaze ID, TVDB ID, or TVRage ID
+- Get episodes for a show
+- Get the next episode for a show
 
 ## Installation
-`go get` the API you're interested in:
+To install the package, run `go get github.com/tehjojo/go-tvmaze/tvmaze`
 
-    // The TV DB:
-    $ go get github.com/rjelierse/go-tvapis/thetvdb
-    // TV Maze:
-    $ go get github.com/rjelierse/go-tvapis/tvmaze
-    
-## TODO
-* Add generic interfaces to allow the usage of either API in place
-* Add support for TV show images
-* Add support for cast members
-* ... (probably a lot more)
+To use it in application, import `"github.com/tehjojo/go-tvmaze/tvmaze"`
+
+## Library Usage
+```
+show, _ := tvmaze.DefaultClient.GetShowWithID("315") // Archer
+episode, _ := c.GetNextEpisode(show)
+```
+
+## Contributing
+Pull requests welcome.

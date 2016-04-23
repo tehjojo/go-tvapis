@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // ShowResponse wraps a TV Maze search response
@@ -27,7 +29,7 @@ type Show struct {
 	Embeds    struct {
 		Episodes []Episode
 	} `json:"_embedded"`
-	Remotes map[string]interface{} `json:"externals"`
+	Remotes map[string]*json.RawMessage `json:"externals"`
 }
 
 // GetTitle return the show title
@@ -55,17 +57,38 @@ func (s Show) GetFirstAired() time.Time {
 
 // GetTVRageID returns the show's ID on tvrage.com
 func (s Show) GetTVRageID() int {
-	return int(s.Remotes["tvrage"].(float64))
+	if s.Remotes["tvrage"] == nil {
+		return 0
+	}
+	var val int
+	if err := json.Unmarshal(*s.Remotes["tvrage"], &val); err != nil {
+		log.WithError(err).WithField("tvrage_id", s.Remotes["tvrage"]).Error("failed to parse tvrage id")
+	}
+	return val
 }
 
 // GetTVDBID returns the show's ID on thetvdb.com
 func (s Show) GetTVDBID() int {
-	return int(s.Remotes["thetvdb"].(float64))
+	if s.Remotes["thetvdb"] == nil {
+		return 0
+	}
+	var val int
+	if err := json.Unmarshal(*s.Remotes["thetvdb"], &val); err != nil {
+		log.WithError(err).WithField("thetvdb_id", s.Remotes["thetvdb"]).Error("failed to parse thetvdb id")
+	}
+	return val
 }
 
 // GetIMDBID returns the show's ID on imdb.com
 func (s Show) GetIMDBID() string {
-	return s.Remotes["imdb"].(string)
+	if s.Remotes["imdb"] == nil {
+		return ""
+	}
+	var val string
+	if err := json.Unmarshal(*s.Remotes["imdb"], &val); err != nil {
+		log.WithError(err).WithField("imdb_id", s.Remotes["imdb"]).Error("failed to parse imdb id")
+	}
+	return val
 }
 
 // FindShows finds all matches for a given search string

@@ -77,7 +77,7 @@ func TestTVMaze(t *testing.T) {
 		})
 
 		Convey("I can get the next episode for a show", func() {
-			show := Show{ID: 75} // Mindy Project
+			show := Show{ID: 315} // Archer
 			episode, err := c.GetNextEpisode(show)
 			So(err, ShouldBeNil)
 			So(episode, ShouldNotBeNil)
