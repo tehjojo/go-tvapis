@@ -30,6 +30,10 @@ type Show struct {
 		Episodes []Episode
 	} `json:"_embedded"`
 	Remotes map[string]*json.RawMessage `json:"externals"`
+	Image   struct {
+		Medium   string
+		Original string
+	}
 }
 
 // GetTitle return the show title
@@ -53,6 +57,16 @@ func (s Show) GetFirstAired() time.Time {
 		return s.Premiered.Time
 	}
 	return time.Time{}
+}
+
+// GetMediumPoster returns the URL to a medium sized poster
+func (s Show) GetMediumPoster() string {
+	return s.Image.Medium
+}
+
+// GetOriginalPoster returns the URL to an original sized poster
+func (s Show) GetOriginalPoster() string {
+	return s.Image.Original
 }
 
 // GetTVRageID returns the show's ID on tvrage.com
