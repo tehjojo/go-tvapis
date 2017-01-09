@@ -1,9 +1,9 @@
 # go-tvmaze
-[![Build Status](https://travis-ci.org/tehjojo/go-tvmaze.svg?branch=master)](https://travis-ci.org/tehjojo/go-tvmaze)
+[![Build Status](https://travis-ci.org/mrobinsn/go-tvmaze.svg?branch=master)](https://travis-ci.org/mrobinsn/go-tvmaze)
 > TVMaze API bindings for Go (golang)
 
 ## Documentation
-https://godoc.org/github.com/tehjojo/go-tvmaze/tvmaze
+https://godoc.org/github.com/mrobinsn/go-tvmaze/tvmaze
 
 ## Features
 - Search shows by name, TVMaze ID, TVDB ID, or TVRage ID
@@ -11,9 +11,9 @@ https://godoc.org/github.com/tehjojo/go-tvmaze/tvmaze
 - Get the next episode for a show
 
 ## Installation
-To install the package, run `go get github.com/tehjojo/go-tvmaze/tvmaze`
+To install the package, run `go get github.com/mrobinsn/go-tvmaze/tvmaze`
 
-To use it in application, import `"github.com/tehjojo/go-tvmaze/tvmaze"`
+To use it in application, import `"github.com/mrobinsn/go-tvmaze/tvmaze"`
 
 ## Library Usage
 ```
