@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 // DefaultClient is the default TV Maze client
@@ -26,10 +26,9 @@ func NewClient() Client {
 }
 
 func (c Client) get(url url.URL, ret interface{}) (err error) {
-	log.WithField("url", url.String()).Debug("getting url")
 	r, err := http.Get(url.String())
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "failed to get url: %s", url.String())
 	}
 
 	defer r.Body.Close()

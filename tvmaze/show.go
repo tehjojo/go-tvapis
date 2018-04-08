@@ -7,6 +7,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
 )
 
 // ShowResponse wraps a TV Maze search response
@@ -191,7 +192,7 @@ func (d *Date) UnmarshalJSON(data []byte) error {
 	var err error
 	var v interface{}
 	if err = json.Unmarshal(data, &v); err != nil {
-		return err
+		return errors.Wrap(err, "failed to unmarshal JSON response")
 	}
 	switch x := v.(type) {
 	case string:
@@ -202,7 +203,7 @@ func (d *Date) UnmarshalJSON(data []byte) error {
 		d.Valid = false
 		return nil
 	default:
-		err = fmt.Errorf("json: cannot unmarshal %v into Go value of type tvmaze.Date", reflect.TypeOf(v).Name())
+		err = errors.Errorf("json: cannot unmarshal %v into Go value of type tvmaze.Date", reflect.TypeOf(v).Name())
 	}
 	d.Valid = err == nil
 	return err
