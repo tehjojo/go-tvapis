@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
 )
 
