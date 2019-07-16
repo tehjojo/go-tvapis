@@ -9,6 +9,13 @@ import (
 func TestTVMaze(t *testing.T) {
 	c := DefaultClient
 
+	t.Run("get shows", func(t *testing.T) {
+		t.Parallel()
+		results, err := c.GetShows(0)
+		require.NoError(t, err)
+		require.NotEmpty(t, len(results))
+	})
+
 	t.Run("find show", func(t *testing.T) {
 		t.Parallel()
 		results, err := c.FindShows("archer")

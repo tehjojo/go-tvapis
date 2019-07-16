@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"strconv"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // ShowResponse wraps a TV Maze search response
@@ -104,6 +105,15 @@ func (s Show) GetIMDBID() string {
 		log.WithError(err).WithField("imdb_id", s.Remotes["imdb"]).Error("failed to parse imdb id")
 	}
 	return val
+}
+
+func (c Client) GetShows(offset int) ([]Show, error) {
+	url := baseURLWithPathQuery("shows", "page", strconv.Itoa(offset))
+	shows := []Show{}
+	if err := c.get(url, &shows); err != nil {
+		return nil, err
+	}
+	return shows, nil
 }
 
 // FindShows finds all matches for a given search string
