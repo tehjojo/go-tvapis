@@ -32,7 +32,7 @@ func (c Client) get(url url.URL, ret interface{}) (status int, err error) {
 	}
 
 	if r.StatusCode >= http.StatusBadRequest {
-		return r.StatusCode, fmt.Errorf("received error status code (%d): %s", r.StatusCode, r.Status)
+		return r.StatusCode, errors.Errorf("received error status code (%d): %s", r.StatusCode, r.Status)
 	}
 
 	defer r.Body.Close()
