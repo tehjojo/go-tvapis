@@ -162,10 +162,7 @@ func (c Client) GetShowWithTVRageID(tvRageID string) (*Show, error) {
 	url := baseURLWithPathQuery("lookup/shows", "tvrage", tvRageID)
 
 	show := &Show{}
-	if status, err := c.get(url, show); err != nil {
-		if status == http.StatusNotFound {
-			return show, nil
-		}
+	if _, err := c.get(url, show); err != nil {
 		return nil, err
 	}
 

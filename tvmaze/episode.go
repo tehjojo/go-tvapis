@@ -2,7 +2,6 @@ package tvmaze
 
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 	"time"
 )
@@ -52,10 +51,7 @@ func (c Client) GetEpisode(s Show, season int, episode int) (*Episode, error) {
 	})
 
 	var epOut Episode
-	if status, err := c.get(url, &epOut); err != nil {
-		if status == http.StatusNotFound {
-			return &epOut, nil
-		}
+	if _, err := c.get(url, &epOut); err != nil {
 		return nil, err
 	}
 	return &epOut, nil
