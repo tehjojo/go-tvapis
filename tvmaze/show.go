@@ -107,7 +107,7 @@ func (s Show) GetIMDBID() string {
 	return val
 }
 
-func (c Client) GetShows(offset int) ([]Show, error) {
+func (c Client) GetShows(page int) ([]Show, error) {
 	url := baseURLWithPathQuery("shows", "page", strconv.Itoa(offset))
 	shows := []Show{}
 	if err := c.get(url, &shows); err != nil {
