@@ -2,6 +2,7 @@ package tvmaze
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -21,7 +22,7 @@ type Episode struct {
 func (c Client) GetEpisodes(s Show) (episodes []Episode, err error) {
 	url := baseURLWithPath(fmt.Sprintf("shows/%d/episodes", s.ID))
 
-	if err = c.get(url, &episodes); err != nil {
+	if _, err = c.get(url, &episodes); err != nil {
 		return nil, err
 	}
 
@@ -33,7 +34,7 @@ func (c Client) GetNextEpisode(s Show) (*Episode, error) {
 	url := baseURLWithPathQuery(fmt.Sprintf("shows/%d", s.ID), "embed", "nextepisode")
 
 	var embed embeddedNextEpisode
-	if err := c.get(url, &embed); err != nil {
+	if _, err := c.get(url, &embed); err != nil {
 		return nil, err
 	}
 
@@ -51,7 +52,10 @@ func (c Client) GetEpisode(s Show, season int, episode int) (*Episode, error) {
 	})
 
 	var epOut Episode
-	if err := c.get(url, &epOut); err != nil {
+	if status, err := c.get(url, &epOut); err != nil {
+		if status == http.StatusNotFound {
+			return &epOut, nil
+		}
 		return nil, err
 	}
 	return &epOut, nil

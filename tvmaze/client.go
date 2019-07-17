@@ -25,14 +25,18 @@ func NewClient() Client {
 	return Client{}
 }
 
-func (c Client) get(url url.URL, ret interface{}) (err error) {
+func (c Client) get(url url.URL, ret interface{}) (status int, err error) {
 	r, err := http.Get(url.String())
 	if err != nil {
-		return errors.Wrapf(err, "failed to get url: %s", url.String())
+		return 0, errors.Wrapf(err, "failed to get url: %s", url.String())
+	}
+
+	if r.StatusCode >= http.StatusBadRequest {
+		return r.StatusCode, fmt.Errorf("received error status code (%d): %s", r.StatusCode, r.Status)
 	}
 
 	defer r.Body.Close()
-	return json.NewDecoder(r.Body).Decode(&ret)
+	return r.StatusCode, json.NewDecoder(r.Body).Decode(&ret)
 }
 
 func baseURLWithPath(path string) url.URL {
