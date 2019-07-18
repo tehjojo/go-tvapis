@@ -3,11 +3,13 @@ package tvmaze
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"reflect"
+	"strconv"
 	"time"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // ShowResponse wraps a TV Maze search response
@@ -106,11 +108,25 @@ func (s Show) GetIMDBID() string {
 	return val
 }
 
+// GetShows returns a list of all shows in the TVMaze database. When the end of the index
+// is reached, a nil slice is returned.
+func (c Client) GetShows(page int) ([]Show, error) {
+	url := baseURLWithPathQuery("shows", "page", strconv.Itoa(page))
+	shows := []Show{}
+	if status, err := c.get(url, &shows); err != nil {
+		if status == http.StatusNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return shows, nil
+}
+
 // FindShows finds all matches for a given search string
 func (c Client) FindShows(name string) (s []ShowResponse, err error) {
 	url := baseURLWithPathQuery("search/shows", "q", name)
 
-	if err := c.get(url, &s); err != nil {
+	if _, err := c.get(url, &s); err != nil {
 		return nil, err
 	}
 
@@ -122,7 +138,7 @@ func (c Client) GetShow(name string) (*Show, error) {
 	url := baseURLWithPathQuery("singlesearch/shows", "q", name)
 
 	show := &Show{}
-	if err := c.get(url, show); err != nil {
+	if _, err := c.get(url, show); err != nil {
 		return nil, err
 	}
 
@@ -134,7 +150,7 @@ func (c Client) GetShowWithID(tvMazeID string) (*Show, error) {
 	url := baseURLWithPath(fmt.Sprintf("shows/%s", tvMazeID))
 
 	show := &Show{}
-	if err := c.get(url, show); err != nil {
+	if _, err := c.get(url, show); err != nil {
 		return nil, err
 	}
 
@@ -146,7 +162,7 @@ func (c Client) GetShowWithTVRageID(tvRageID string) (*Show, error) {
 	url := baseURLWithPathQuery("lookup/shows", "tvrage", tvRageID)
 
 	show := &Show{}
-	if err := c.get(url, show); err != nil {
+	if _, err := c.get(url, show); err != nil {
 		return nil, err
 	}
 
@@ -158,7 +174,7 @@ func (c Client) GetShowWithTVDBID(TVDBID string) (*Show, error) {
 	url := baseURLWithPathQuery("lookup/shows", "thetvdb", TVDBID)
 
 	show := &Show{}
-	if err := c.get(url, show); err != nil {
+	if _, err := c.get(url, show); err != nil {
 		return nil, err
 	}
 
@@ -166,9 +182,10 @@ func (c Client) GetShowWithTVDBID(TVDBID string) (*Show, error) {
 }
 
 // RefreshShow refreshes a show from the server
-func (c Client) RefreshShow(show *Show) (err error) {
+func (c Client) RefreshShow(show *Show) error {
 	url := baseURLWithPath(fmt.Sprintf("shows/%d", show.ID))
-	return c.get(url, &show)
+	_, err := c.get(url, &show)
+	return err
 }
 
 // Date represents a date from tvmaze, supporting nullability

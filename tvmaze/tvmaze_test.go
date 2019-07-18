@@ -9,6 +9,16 @@ import (
 func TestTVMaze(t *testing.T) {
 	c := DefaultClient
 
+	t.Run("get shows", func(t *testing.T) {
+		t.Parallel()
+		results, err := c.GetShows(0)
+		require.NoError(t, err)
+		require.NotEmpty(t, len(results))
+		results, err = c.GetShows(99999) // This should trigger a 404, as there aren't these many pages in the index
+		require.NoError(t, err)
+		require.Nil(t, results)
+	})
+
 	t.Run("find show", func(t *testing.T) {
 		t.Parallel()
 		results, err := c.FindShows("archer")
