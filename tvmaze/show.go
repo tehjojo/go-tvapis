@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strconv"
 	"time"
@@ -37,6 +38,20 @@ type Show struct {
 		Medium   string
 		Original string
 	}
+}
+
+func (s Show) get(url url.URL, ret interface{}) (status int, err error) {
+	r, err := http.Get(url.String())
+	if err != nil {
+		return 0, errors.Wrapf(err, "failed to get url: %s", url.String())
+	}
+
+	if r.StatusCode >= http.StatusBadRequest {
+		return r.StatusCode, errors.Errorf("received error status code (%d): %s", r.StatusCode, r.Status)
+	}
+
+	defer r.Body.Close()
+	return r.StatusCode, json.NewDecoder(r.Body).Decode(&ret)
 }
 
 // GetTitle return the show title
