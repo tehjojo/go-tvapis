@@ -44,7 +44,8 @@ func TestTVMaze(t *testing.T) {
 
 	t.Run("get episode", func(t *testing.T) {
 		t.Parallel()
-		result, err := c.GetEpisode(Show{ID: 315}, 4, 5)
+		show := Show{ID: 315}
+		result, err := show.GetEpisode(4, 5)
 		require.NoError(t, err)
 		require.NotNil(t, result, "expected a result")
 		require.NotEmpty(t, result.Name)
@@ -82,7 +83,7 @@ func TestTVMaze(t *testing.T) {
 	t.Run("get episodes", func(t *testing.T) {
 		t.Parallel()
 		show := Show{ID: 315} // Archer
-		episodes, err := c.GetEpisodes(show)
+		episodes, err := show.GetEpisodes()
 		require.NoError(t, err)
 		require.NotEmpty(t, episodes, "expected to get episodes")
 	})
@@ -90,7 +91,7 @@ func TestTVMaze(t *testing.T) {
 	t.Run("get next episode", func(t *testing.T) {
 		t.Parallel()
 		show := Show{ID: 1864} // Superstore
-		episode, err := c.GetNextEpisode(show)
+		episode, err := show.GetNextEpisode()
 		require.NoError(t, err)
 		require.NotNil(t, episode)
 	})
@@ -98,7 +99,7 @@ func TestTVMaze(t *testing.T) {
 	t.Run("null times", func(t *testing.T) {
 		t.Parallel()
 		show := Show{ID: 180} // Firefly
-		episodes, err := c.GetEpisodes(show)
+		episodes, err := show.GetEpisodes()
 		require.NoError(t, err)
 		require.NotEmpty(t, episodes, "expected to get episodes")
 	})
