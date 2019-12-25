@@ -57,6 +57,27 @@ func (s Show) GetEpisode(season int, episode int) (*Episode, error) {
 	return &epOut, nil
 }
 
+/*
+	Backwards compatibility
+*/
+// GetEpisodes finds all episodes for the given show
+func (c Client) GetEpisodes(s Show) (episodes []Episode, err error) {
+	fmt.Println("[WARN] (Client).GetEpisodes(Show) is deprecated.")
+	return s.GetEpisodes()
+}
+
+// GetNextEpisode returns the next un-air episode for the show
+func (c Client) GetNextEpisode(s Show) (*Episode, error) {
+	fmt.Println("[WARN] (Client).GetNextEpisode(Show) is deprecated.")
+	return s.GetNextEpisode()
+}
+
+// GetEpisode returns a specific episode for a show
+func (c Client) GetEpisode(s Show, season int, episode int) (*Episode, error) {
+	fmt.Println("[WARN] (Client).GetEpisode(Show) is deprecated.")
+	return s.GetEpisode(season, episode)
+}
+
 type embeddedNextEpisode struct {
 	Embedded struct {
 		NextEpisode Episode `json:"nextepisode"`
