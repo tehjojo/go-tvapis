@@ -127,4 +127,16 @@ func TestTVMaze(t *testing.T) {
 		require.Error(t, err)
 		require.Empty(t, season, "expected to not get season 12")
 	})
+	t.Run("get show with webchannel", func(t *testing.T) {
+		t.Parallel()
+		result, err := c.GetShowWithID("43031") // Reacher
+		// fmt.Println(err)
+		// fmt.Println(result)
+		// fmt.Printf("%+v\n", result.WebChannel)
+		require.NoError(t, err)
+		require.NotNil(t, result, "expected a result")
+		require.NotEmpty(t, result.GetTitle())
+		require.NotEmpty(t, result.GetDescription())
+		require.Equal(t, "Prime Video", result.WebChannel.Name)
+	})
 }
