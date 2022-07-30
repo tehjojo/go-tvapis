@@ -21,16 +21,25 @@ type ShowResponse struct {
 
 // Show wraps a TV Maze show object
 type Show struct {
-	ID        int
-	Name      string
-	Type      string
-	Genres    []string
-	Status    string
-	Runtime   int
-	Premiered Date
-	Summary   string
-	Network   network
-	Embeds    struct {
+	ID         int
+	Name       string
+	Type       string
+	Language   string `json:"language"`
+	Genres     []string
+	Status     string
+	Runtime    int
+	Premiered  Date
+	Ended      Date `json:"ended"`
+	Summary    string
+	Network    network
+	Updated    int `json:"updated"`
+	WebChannel struct {
+		ID           int         `json:"id"`
+		Name         string      `json:"name"`
+		Country      interface{} `json:"country"` //Had to make it interface to avoid interface{}
+		OfficialSite string      `json:"officialSite"`
+	} `json:"webChannel"`
+	Embeds struct {
 		Episodes []Episode
 	} `json:"_embedded"`
 	Remotes map[string]*json.RawMessage `json:"externals"`
@@ -132,6 +141,7 @@ func (c Client) GetShows(page int) ([]Show, error) {
 		if status == http.StatusNotFound {
 			return nil, nil
 		}
+		log.Printf("err on")
 		return nil, err
 	}
 	return shows, nil
