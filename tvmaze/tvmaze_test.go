@@ -90,7 +90,7 @@ func TestTVMaze(t *testing.T) {
 
 	t.Run("get next episode", func(t *testing.T) {
 		t.Parallel()
-		show := Show{ID: 6} // The 100
+		show := Show{ID: 35144} // jersey-shore-family-vacation
 		episode, err := show.GetNextEpisode()
 		require.NoError(t, err)
 		require.NotNil(t, episode)
