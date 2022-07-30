@@ -90,7 +90,7 @@ func TestTVMaze(t *testing.T) {
 
 	t.Run("get next episode", func(t *testing.T) {
 		t.Parallel()
-		show := Show{ID: 6} // The 100
+		show := Show{ID: 35144} // jersey-shore-family-vacation
 		episode, err := show.GetNextEpisode()
 		require.NoError(t, err)
 		require.NotNil(t, episode)
@@ -102,5 +102,29 @@ func TestTVMaze(t *testing.T) {
 		episodes, err := show.GetEpisodes()
 		require.NoError(t, err)
 		require.NotEmpty(t, episodes, "expected to get episodes")
+	})
+
+	t.Run("seasons", func(t *testing.T) {
+		t.Parallel()
+		show := Show{ID: 35144} // jersey-shore-family-vacation
+		seasons, err := show.GetSeasons()
+		require.NoError(t, err)
+		require.NotEmpty(t, seasons, "expected to get seasons")
+	})
+
+	t.Run("season 2 present", func(t *testing.T) {
+		t.Parallel()
+		show := Show{ID: 35144} // jersey-shore-family-vacation
+		season, err := show.GetSeason(2)
+		require.NoError(t, err)
+		require.NotEmpty(t, season, "expected to get season 2")
+	})
+
+	t.Run("season 12 missing", func(t *testing.T) {
+		t.Parallel()
+		show := Show{ID: 35144} // jersey-shore-family-vacation
+		season, err := show.GetSeason(12)
+		require.Error(t, err)
+		require.Empty(t, season, "expected to not get season 12")
 	})
 }
