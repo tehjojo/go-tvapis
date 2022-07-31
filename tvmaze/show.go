@@ -75,7 +75,11 @@ func (s Show) GetDescription() string {
 
 // GetNetwork returns the network that currently broadcasts the show
 func (s Show) GetNetwork() string {
-	return s.Network.Name
+	if s.WebChannel.Name != "" {
+		return s.WebChannel.Name
+	} else {
+		return s.Network.Name
+	}
 }
 
 // GetFirstAired return the time the first episode was aired

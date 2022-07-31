@@ -2,6 +2,7 @@ package tvmaze
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -26,6 +27,7 @@ func TestTVMaze(t *testing.T) {
 		require.NotEmpty(t, results, "expected results")
 		require.NotEmpty(t, results[0].Show.GetTitle())
 		require.NotEmpty(t, results[0].Show.GetDescription())
+		require.Equal(t, "FXX", results[0].Show.GetNetwork())
 	})
 
 	t.Run("get show by id", func(t *testing.T) {
@@ -130,13 +132,32 @@ func TestTVMaze(t *testing.T) {
 	t.Run("get show with webchannel", func(t *testing.T) {
 		t.Parallel()
 		result, err := c.GetShowWithID("43031") // Reacher
-		// fmt.Println(err)
-		// fmt.Println(result)
-		// fmt.Printf("%+v\n", result.WebChannel)
 		require.NoError(t, err)
 		require.NotNil(t, result, "expected a result")
 		require.NotEmpty(t, result.GetTitle())
 		require.NotEmpty(t, result.GetDescription())
 		require.Equal(t, "Prime Video", result.WebChannel.Name)
+		require.Equal(t, "Prime Video", result.GetNetwork())
 	})
+	t.Run("get active season jersey shore", func(t *testing.T) {
+		t.Parallel()
+		result, err := c.GetShowWithID("35144") // jersey-shore-family-vacation
+		require.NoError(t, err)
+		require.NotNil(t, result, "expected a result")
+
+		//Season 2 is between 2018-08-23 and 2019-08-15.
+		dt := time.Date(2018, time.September, 5, 0, 0, 0, 0, time.Now().Location())
+		active, errActive := result.GetActiveSeason(dt)
+		require.NoError(t, errActive)
+		require.NotNil(t, active, "expected a result")
+	})
+	t.Run("current season shameless us ended", func(t *testing.T) {
+		t.Parallel()
+		show := Show{ID: 150} // Shameless US
+		season, err := show.GetCurrentSeason()
+		require.NoError(t, err)
+		require.NotEmpty(t, season)
+		require.Equal(t, 11, season.Number) //Show is ended so the test will be valid in future
+	})
+
 }
