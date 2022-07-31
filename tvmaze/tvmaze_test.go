@@ -138,6 +138,7 @@ func TestTVMaze(t *testing.T) {
 		require.NotEmpty(t, result.GetDescription())
 		require.Equal(t, "Prime Video", result.WebChannel.Name)
 		require.Equal(t, "Prime Video", result.GetNetwork())
+		require.Equal(t, "", result.GetCountry()) //WebChannel typically have the country set to null
 	})
 	t.Run("get active season jersey shore", func(t *testing.T) {
 		t.Parallel()
@@ -153,11 +154,13 @@ func TestTVMaze(t *testing.T) {
 	})
 	t.Run("current season shameless us ended", func(t *testing.T) {
 		t.Parallel()
-		show := Show{ID: 150} // Shameless US
+		show, err1 := c.GetShowWithID("150") // Shameless US
+		require.NoError(t, err1)
 		season, err := show.GetCurrentSeason()
 		require.NoError(t, err)
 		require.NotEmpty(t, season)
 		require.Equal(t, 11, season.Number) //Show is ended so the test will be valid in future
+		require.Equal(t, "United States", show.GetCountry())
 	})
 
 }

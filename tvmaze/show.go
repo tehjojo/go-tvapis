@@ -22,6 +22,7 @@ type ShowResponse struct {
 // Show wraps a TV Maze show object
 type Show struct {
 	ID         int
+	Url        string
 	Name       string
 	Type       string
 	Language   string `json:"language"`
@@ -34,10 +35,10 @@ type Show struct {
 	Network    network
 	Updated    int `json:"updated"`
 	WebChannel struct {
-		ID           int         `json:"id"`
-		Name         string      `json:"name"`
-		Country      interface{} `json:"country"` //Had to make it interface to avoid interface{}
-		OfficialSite string      `json:"officialSite"`
+		ID           int     `json:"id"`
+		Name         string  `json:"name"`
+		Country      country `json:"country"` //Had to make it interface to avoid interface{}
+		OfficialSite string  `json:"officialSite"`
 	} `json:"webChannel"`
 	Embeds struct {
 		Episodes []Episode
@@ -79,6 +80,15 @@ func (s Show) GetNetwork() string {
 		return s.WebChannel.Name
 	} else {
 		return s.Network.Name
+	}
+}
+
+// GetCountry returns the country that currently broadcasts the show
+func (s Show) GetCountry() string {
+	if s.WebChannel.Country.Name != "" {
+		return s.WebChannel.Country.Name
+	} else {
+		return s.Network.Country.Name
 	}
 }
 
@@ -160,6 +170,11 @@ func (c Client) FindShows(name string) (s []ShowResponse, err error) {
 	}
 
 	return s, nil
+}
+
+//FindShowsUrl Returns the search URL for a given search string
+func (c Client) FindShowsUrl(name string) url.URL {
+	return baseURLWithPathQuery("search/shows", "q", name)
 }
 
 // GetShow finds all matches for a given search string
