@@ -1,6 +1,9 @@
 package tvmaze
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type Season struct {
 	ID           int    `json:"id"`
@@ -8,8 +11,8 @@ type Season struct {
 	Number       int    `json:"number"`
 	Name         string `json:"name"`
 	EpisodeOrder int    `json:"episodeOrder"`
-	PremiereDate string `json:"premiereDate"`
-	EndDate      string `json:"endDate"`
+	PremiereDate Date   `json:"premiereDate"`
+	EndDate      Date   `json:"endDate"`
 	Network      struct {
 		ID      int    `json:"id"`
 		Name    string `json:"name"`
@@ -33,6 +36,13 @@ type Season struct {
 	} `json:"_links"`
 }
 
+//IsFuture returns whether the season is in the future.
+// TVMaze often tracks seasons that have been ordered, but not started
+func (s Season) IsFuture() bool {
+	return s.PremiereDate.After(time.Now())
+}
+
+//GetSeasons retrieves the seasons for a TV Show
 func (s Show) GetSeasons() (seasons []Season, err error) {
 	url := baseURLWithPath(fmt.Sprintf("shows/%d/seasons", s.ID))
 
@@ -55,4 +65,40 @@ func (s Show) GetSeason(seasonNumber int) (*Season, error) {
 		}
 	}
 	return nil, fmt.Errorf("Season not found")
+}
+
+// GetActiveSeason returns the active season for the date provided
+// Note: Web Shows often have a Premiere and End Date set to same date and it wont be retrievable with this function
+func (s Show) GetActiveSeason(dt time.Time) (*Season, error) {
+	seasons, err := s.GetSeasons()
+	if err != nil {
+		return nil, err
+	}
+	for _, season := range seasons {
+		if dt.After(season.PremiereDate.Time) && dt.Before(season.EndDate.Time) {
+			return &season, nil
+		}
+	}
+
+	return nil, fmt.Errorf("no active seasons found for provided date %s", dt)
+}
+
+//GetCurrentSeason returns the current season that is not in the future.
+func (s Show) GetCurrentSeason() (*Season, error) {
+	seasons, err := s.GetSeasons()
+	if err != nil {
+		return nil, err
+	}
+	if len(seasons) == 0 {
+		return nil, fmt.Errorf("no current season found")
+	}
+
+	//Return last season. Assume they are pre-sorted in the API response.
+	for i := len(seasons) - 1; i >= 0; i-- {
+		if !seasons[i].IsFuture() {
+			return &seasons[i], nil
+		}
+	}
+
+	return nil, fmt.Errorf("no current season found")
 }
