@@ -39,6 +39,10 @@ type Season struct {
 //IsFuture returns whether the season is in the future.
 // TVMaze often tracks seasons that have been ordered, but not started
 func (s Season) IsFuture() bool {
+	//Safety check. Often future seasons dont have a date set.
+	if s.PremiereDate.IsZero() {
+		return true
+	}
 	return s.PremiereDate.After(time.Now())
 }
 
