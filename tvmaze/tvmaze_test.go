@@ -79,6 +79,7 @@ func TestTVMaze(t *testing.T) {
 
 		require.NoError(t, err)
 		require.NotEmpty(t, show.GetTitle())
+		require.NotEmpty(t, show.Seasons)
 		require.NotEmpty(t, show.GetDescription())
 	})
 

@@ -261,10 +261,11 @@ func (c Client) GetShowWithTVDBID(TVDBID string) (*Show, error) {
 }
 
 // RefreshShow refreshes a show from the server
-//TODO - May need to refresh seasons too
 func (c Client) RefreshShow(show *Show) error {
 	url := baseURLWithPath(fmt.Sprintf("shows/%d", show.ID))
 	_, err := c.get(url, &show)
+	//Blindly refresh
+	show.Seasons, _ = show.getSeasons()
 	return err
 }
 
