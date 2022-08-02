@@ -108,17 +108,17 @@ func TestTVMaze(t *testing.T) {
 
 	t.Run("seasons", func(t *testing.T) {
 		t.Parallel()
-		show := Show{ID: 35144} // jersey-shore-family-vacation
-		seasons, err := show.GetSeasons()
+		seasons, err := c.GetSeasons(35144) // jersey-shore-family-vacation
 		require.NoError(t, err)
 		require.NotEmpty(t, seasons, "expected to get seasons")
 	})
 
 	t.Run("season 2 present", func(t *testing.T) {
 		t.Parallel()
-		show := Show{ID: 35144} // jersey-shore-family-vacation
-		season, err := show.GetSeason(2)
-		require.NoError(t, err)
+		show, err1 := c.GetShowWithID("35144") // jersey-shore-family-vacation
+		season, err2 := show.GetSeason(2)
+		require.NoError(t, err1)
+		require.NoError(t, err2)
 		require.NotEmpty(t, season, "expected to get season 2")
 	})
 
@@ -160,7 +160,7 @@ func TestTVMaze(t *testing.T) {
 		require.NoError(t, err)
 		require.NotEmpty(t, season)
 		require.Equal(t, 11, season.Number) //Show is ended so the test will be valid in future
+		require.Equal(t, 11, len(show.Seasons))
 		require.Equal(t, "United States", show.GetCountry())
 	})
-
 }

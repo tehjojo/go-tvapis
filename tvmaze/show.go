@@ -48,6 +48,7 @@ type Show struct {
 		Medium   string
 		Original string
 	}
+	Seasons []Season
 }
 
 func (s Show) get(url url.URL, ret interface{}) (status int, err error) {
@@ -185,6 +186,14 @@ func (c Client) GetShow(name string) (*Show, error) {
 	if _, err := c.get(url, show); err != nil {
 		return nil, err
 	}
+	if show.ID != 0 {
+		seasons, err := show.getSeasons()
+		if err != nil {
+			fmt.Println("Unable to fetch seasons for show")
+		} else {
+			show.Seasons = seasons
+		}
+	}
 
 	return show, nil
 }
@@ -196,6 +205,15 @@ func (c Client) GetShowWithID(tvMazeID string) (*Show, error) {
 	show := &Show{}
 	if _, err := c.get(url, show); err != nil {
 		return nil, err
+	}
+
+	if show.ID != 0 {
+		seasons, err := show.getSeasons()
+		if err != nil {
+			fmt.Println("Unable to fetch seasons for show")
+		} else {
+			show.Seasons = seasons
+		}
 	}
 
 	return show, nil
@@ -210,6 +228,14 @@ func (c Client) GetShowWithTVRageID(tvRageID string) (*Show, error) {
 		return nil, err
 	}
 
+	if show.ID != 0 {
+		seasons, err := show.getSeasons()
+		if err != nil {
+			fmt.Println("Unable to fetch seasons for show")
+		} else {
+			show.Seasons = seasons
+		}
+	}
 	return show, nil
 }
 
@@ -222,14 +248,34 @@ func (c Client) GetShowWithTVDBID(TVDBID string) (*Show, error) {
 		return nil, err
 	}
 
+	if show.ID != 0 {
+		seasons, err := show.getSeasons()
+		if err != nil {
+			fmt.Println("Unable to fetch seasons for show")
+		} else {
+			show.Seasons = seasons
+		}
+	}
+
 	return show, nil
 }
 
 // RefreshShow refreshes a show from the server
+//TODO - May need to refresh seasons too
 func (c Client) RefreshShow(show *Show) error {
 	url := baseURLWithPath(fmt.Sprintf("shows/%d", show.ID))
 	_, err := c.get(url, &show)
 	return err
+}
+
+func (c Client) GetSeasons(showID int) (seasons []Season, err error) {
+	url := baseURLWithPath(fmt.Sprintf("shows/%d/seasons", showID))
+
+	if _, err = c.get(url, &seasons); err != nil {
+		return nil, err
+	}
+
+	return seasons, nil
 }
 
 // Date represents a date from tvmaze, supporting nullability
