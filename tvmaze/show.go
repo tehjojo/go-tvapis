@@ -75,6 +75,11 @@ func (s Show) GetDescription() string {
 	return s.Summary
 }
 
+// IsWebOnly returns whether the show is online only (ie. Netflix/Amazon Prime or other networks)
+func (s Show) IsWebOnly() bool {
+	return s.WebChannel.ID != 0
+}
+
 // GetNetwork returns the network that currently broadcasts the show
 func (s Show) GetNetwork() string {
 	if s.WebChannel.Name != "" {
@@ -173,7 +178,7 @@ func (c Client) FindShows(name string) (s []ShowResponse, err error) {
 	return s, nil
 }
 
-//FindShowsUrl Returns the search URL for a given search string
+// FindShowsUrl Returns the search URL for a given search string
 func (c Client) FindShowsUrl(name string) url.URL {
 	return baseURLWithPathQuery("search/shows", "q", name)
 }

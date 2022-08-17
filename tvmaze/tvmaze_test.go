@@ -128,6 +128,7 @@ func TestTVMaze(t *testing.T) {
 		show := Show{ID: 35144} // jersey-shore-family-vacation
 		season, err := show.GetSeason(12)
 		require.Error(t, err)
+		require.False(t, show.IsWebOnly())
 		require.Empty(t, season, "expected to not get season 12")
 	})
 	t.Run("get show with webchannel", func(t *testing.T) {
@@ -137,6 +138,7 @@ func TestTVMaze(t *testing.T) {
 		require.NotNil(t, result, "expected a result")
 		require.NotEmpty(t, result.GetTitle())
 		require.NotEmpty(t, result.GetDescription())
+		require.True(t, result.IsWebOnly())
 		require.Equal(t, "Prime Video", result.WebChannel.Name)
 		require.Equal(t, "Prime Video", result.GetNetwork())
 		require.Equal(t, "", result.GetCountry()) //WebChannel typically have the country set to null
