@@ -57,6 +57,18 @@ func (s Show) GetEpisode(season int, episode int) (*Episode, error) {
 	return &epOut, nil
 }
 
+// GetEpisodeDate returns an array of episodes for a show aired on that date
+func (s Show) GetEpisodeDate(year int, month int, day int) (episodes []Episode, err error) {
+	url := baseURLWithPathQueries(fmt.Sprintf("shows/%d/episodesbydate", s.ID), map[string]string{
+		"date": fmt.Sprintf("%d-%d-%d", year, month, day),
+	})
+
+	if _, err := s.get(url, &episodes); err != nil {
+		return nil, err
+	}
+	return episodes, nil
+}
+
 /*
 	Backwards compatibility
 */
